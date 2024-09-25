@@ -15,6 +15,11 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private bool isGround = false;
     // 점프
     [SerializeField] private float jumpHeight = 1f;
+
+    // 그라운드 체크
+    public Transform groundCheck;
+    [SerializeField] private float checkRange = 0.2f;
+    [SerializeField] private LayerMask groundMask;
     #endregion
     // Start is called before the first frame update
     void Start()
@@ -25,8 +30,8 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        isGround = cc.isGrounded;
-        if (isGround && velocity.y < 0f)
+        Debug.Log(IsGroundCheck());
+        if (IsGroundCheck() && velocity.y < 0f)
         {
             velocity.y = -9.81f;
         }
@@ -34,7 +39,7 @@ public class PlayerMove : MonoBehaviour
         cc.Move(velocity * Time.deltaTime);
 
         Move();
-        if (Input.GetKeyDown(KeyCode.Space) && isGround)
+        if (Input.GetKeyDown(KeyCode.Space) && IsGroundCheck())
         {
             Jump();
         }
@@ -50,7 +55,13 @@ public class PlayerMove : MonoBehaviour
 
     private void Jump()
     {
+        if (IsGroundCheck() == false) return;
         velocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+    }
+
+    private bool IsGroundCheck()
+    {
+        return Physics.CheckSphere(groundCheck.position, checkRange, groundMask);
     }
 }
 
