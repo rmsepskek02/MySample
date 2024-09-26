@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace MySample
@@ -17,11 +15,15 @@ namespace MySample
         [SerializeField] private float gravity = -9.81f;
         //플레이어의 속도 - 중력만 적용
         [SerializeField] private Vector3 velocity;
-        //그라운드 체크
-        [SerializeField] private bool isGround = false;
 
         //점프
         [SerializeField] private float jumpHeight = 1f;
+
+        //그라운드 체크
+        [SerializeField] private bool isGround = false;
+        public Transform groundCheck;
+        [SerializeField] private float checkRange = 0.2f;
+        [SerializeField] private LayerMask groundMask;
         #endregion
 
         private void Start()
@@ -35,7 +37,7 @@ namespace MySample
             isGround = controller.isGrounded;
             if(isGround && velocity.y < 0f)
             {
-                velocity.y = 0f;
+                velocity.y = -1f;
             }
 
             //이동
@@ -64,6 +66,11 @@ namespace MySample
         private void Jump()
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+        }
+
+        private bool IsGroundCheck()
+        {
+            return Physics.CheckSphere(groundCheck.position, checkRange, groundMask);
         }
     }
 }
